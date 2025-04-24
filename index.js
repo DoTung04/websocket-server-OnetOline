@@ -44,7 +44,7 @@ server.on("connection", (socket) => {
                     }
             
                     rooms[currentRoom].forEach(client => {
-                        if (client !== socket && client.readyState === WebSocket.OPEN) {
+                        if (client.readyState === WebSocket.OPEN) {
                             // Gửi cho tất cả người trong phòng (nếu muốn chỉ gửi cho người còn lại thì lọc)
                             client.send(JSON.stringify(response));
                         }
