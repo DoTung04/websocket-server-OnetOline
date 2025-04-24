@@ -33,19 +33,25 @@ server.on("connection", (socket) => {
                     socket.send(JSON.stringify({ type: "error", message: "Room not found or already full!" }));
                 }
 
-            } else if (data.type === "message" || data.type === "hide_button") {
+            } else if (data.type === "message" ||  data.type === "poke") {
                 if (currentRoom && rooms[currentRoom]) {
-                    const response = (data.type === "message")
-                        ? { type: "message", name: data.name, text: data.text }
-                        : { type: "hide_button" };
-
+                    let response;
+            
+                    if (data.type === "message") {
+                        response = { type: "message", name: data.name, text: data.text };
+                    } else if (data.type === "poke") {
+                        response = { type: "poke", name: data.name }; // Gửi tên người chọc
+                    }
+            
                     rooms[currentRoom].forEach(client => {
                         if (client.readyState === WebSocket.OPEN) {
+                            // Gửi cho tất cả người trong phòng (nếu muốn chỉ gửi cho người còn lại thì lọc)
                             client.send(JSON.stringify(response));
                         }
                     });
                 }
             }
+            
 
         } catch (e) {
             console.log("Invalid JSON:", message);
